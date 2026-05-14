@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>飲食規劃系統</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+    <link rel="stylesheet" href="statics/css/inbody_edit.css">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+
+    <script src="statics/js/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+	<div class="bgimg">
+		<img class="bg" src="statics/img/bgimg.png">
+
+		<div id="header">
+			<div class="title-bar">
+				<p>飲食規劃系統</p>
+				<a class="member" href="member.html"><img src="statics/img/member.png" alt="Member website" class="member-img"></a></li>
+			</div>
+			<ul>
+				<li><a href="weight.html">體重</a></li>
+				<li><a href="diet.html">飲食</a></li>
+				<li><a href="menu.html">菜單</a></li>
+				<li><a href="chart.html">圖表</a></li>
+				<li><a href="inbody.html" class="this-page">身體數據</a></li>
+			</ul>
+		</div>
+		<div id="content">
+			<div class="form-container">
+				<form id="form" accept-charset="utf-8">
+					<div>
+						<label for="member_gender" class="label-title"><b>性別</b></label>
+						<div id="member_gender">
+							<input name="gender" type="radio" value="male" id="member_male"><label for="member_male" class="label-content">男</label>
+							<input name="gender" type="radio" value="female" id="member_female"><label for="member_female" class="label-content">女</label>
+						</div>
+					</div>
+					<div>
+						<label for="member_age" class="label-title"><b>年齡</b></label><br>
+						<input name="age" type="number" id="member_age" min="1" required="required">
+					</div>
+					<div>
+						<label for="member_height" class="label-title"><b>身高</b></label><br>
+						<input name="height" type="number" step="0.1" min="0.1" id="member_height" required="required">
+					</div>
+					<div>
+						<label for="member_weight" class="label-title"><b>體重</b></label><br>
+						<input name="weight" type="number" step="0.1" min="0.1" id="member_weight" required="required">
+					</div>
+					<div>
+						<label for="member_self_activity" class="label-title"><b>自我活動力</b></label>
+						<div id="member_self_activity">
+							<input name="self_activity" type="radio" value="static" id="member_static"><label for="member_static" class="label-content">靜態</label>
+							<input name="self_activity" type="radio" value="lower" id="member_lower"><label for="member_lower" class="label-content">較低</label>
+							<input name="self_activity" type="radio" value="normal" id="member_normal"><label for="member_normal" class="label-content">正常</label>
+							<input name="self_activity" type="radio" value="higher" id="member_higher"><label for="member_higher" class="label-content">較高</label>
+							<input name="self_activity" type="radio" value="fierce" id="member_fierce"><label for="member_fierce" class="label-content">激烈</label>
+						</div>
+					</div>
+					<div class="submit"><input type="button" value="更新完成" id="submit_button"></div>
+				</form>
+			</div>
+			
+			<script>
+				var url_string = window.location.href;
+				var url = new URL(url_string);
+				var id = url.searchParams.get("id");
+				
+				function updateInbody(id) {
+					var maleRadioButton = document.getElementById("member_male");
+					var maleValue = maleRadioButton.checked ? maleRadioButton.value : null;
+					var femaleRadioButton = document.getElementById("member_female");
+					var femaleValue = femaleRadioButton.checked ? femaleRadioButton.value : null;
+					var gender = maleValue || femaleValue;
+					
+					var age = $('#member_age').val();
+					var height = $('#member_height').val();
+					var weight = $('#member_weight').val();
+					
+					var staticRadioButton = document.getElementById("member_static");
+					var staticValue = staticRadioButton.checked ? staticRadioButton.value : null;
+					var lowerRadioButton = document.getElementById("member_lower");
+					var lowerValue = lowerRadioButton.checked ? lowerRadioButton.value : null;
+					var normalRadioButton = document.getElementById("member_normal");
+					var normalValue = normalRadioButton.checked ? normalRadioButton.value : null;
+					var higherRadioButton = document.getElementById("member_higher");
+					var higherValue = higherRadioButton.checked ? higherRadioButton.value : null;
+					var fierceRadioButton = document.getElementById("member_fierce");
+					var fierceValue = fierceRadioButton.checked ? fierceRadioButton.value : null;
+					var self_activity = staticValue || lowerValue || normalValue || higherValue || fierceValue;
+					
+					if(isFormEmpty()==true){
+						alert("不可以為空值！");
+					}
+					else {
+						var data_object = {
+							"member_id": id,
+							"gender": gender,
+							"age": age,
+							"height": height,
+							"weight": weight,
+							"self_activity": self_activity
+						};
+						
+						var data_string = JSON.stringify(data_object);
+						
+						$.ajax({
+							type: "PUT",
+							url: "api/personal_inbody.do",
+							data: data_string,
+							crossDomain: true,
+							cache: false,
+							dataType: 'json',
+							timeout: 5000,
+							success: function (response) {
+								if(response.status == 200){
+									alert("更新成功！");
+									redirectToPage();
+								}
+							},
+							error: function () {
+								alert("無法連線到伺服器！");
+							}
+						});
+					}
+				}
+
+				function isFormEmpty() {
+					var genderRadioButtons = document.getElementsByName('gender');
+					var isGenderSelected = Array.from(genderRadioButtons).some(button => button.checked);
+					
+					var activityRadioButtons = document.getElementsByName('self_activity');
+					var isActivitySelected = Array.from(activityRadioButtons).some(button => button.checked);
+					
+					var ageInput = document.getElementById('member_age').value;
+					var heightInput = document.getElementById('member_height').value;
+					var weightInput = document.getElementById('member_weight').value;
+					
+					if (!isGenderSelected || !isActivitySelected || ageInput === '' || heightInput === '' || weightInput === '') {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				
+				function redirectToPage() {
+					window.location.href = "inbody.html";
+				}
+				
+				function getInbody() {
+					$.ajax({
+						type: "GET",
+						url: "api/personal_inbody.do",
+						crossDomain: true,
+						data: "member_id=" + id,
+						cache: false,
+						dataType: 'json',
+						timeout: 5000,
+						success: function (response) {
+							if(response.status == 200) {
+								if(response['response']['data'][0]['gender'] == "male") {
+									document.getElementById('member_male').checked = true;
+								}
+								else if(response['response']['data'][0]['gender'] == "female") {
+									document.getElementById('member_female').checked = true;
+								}
+								document.getElementById('member_age').value = response['response']['data'][0]['age'];
+								document.getElementById('member_height').value = response['response']['data'][0]['height'];
+								document.getElementById('member_weight').value = response['response']['data'][0]['weight'];
+								if(response['response']['data'][0]['self_activity'] == "static") {
+									document.getElementById('member_static').checked = true;
+								}
+								else if(response['response']['data'][0]['self_activity'] == "lower") {
+									document.getElementById('member_lower').checked = true;
+								}
+								else if(response['response']['data'][0]['self_activity'] == "normal") {
+									document.getElementById('member_normal').checked = true;
+								}
+								else if(response['response']['data'][0]['self_activity'] == "higher") {
+									document.getElementById('member_higher').checked = true;
+								}
+								else if(response['response']['data'][0]['self_activity'] == "fierce") {
+									document.getElementById('member_fierce').checked = true;
+								}
+							}
+							console.log(response);
+						},
+						error: function () {
+							alert("還沒有建立身體數據或無法連線到伺服器！");
+						}
+					});
+				}
+				
+				$('#submit_button').click(function() {
+					updateInbody(id);
+				});
+				
+				$(document).ready(function() {
+					getInbody();
+				});
+			</script>
+		</div>
+	</div>
+</body>
+
+</html>

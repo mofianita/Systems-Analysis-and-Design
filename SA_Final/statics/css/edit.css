@@ -1,0 +1,149 @@
+html {
+    background-color: hsl(0, 60%, 82%);
+}
+body, form, ul, li, p {
+    margin: 0;
+    padding: 0;
+    background-color: hsl(0, 60%, 82%);
+}
+
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+.food-form {
+    max-width: auto/*800px*/;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.row1 {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 新增這行來水平居中 */
+    margin-bottom: 10px;
+}
+
+.row1 label {
+    text-align: center;
+}
+.row1 input {
+    margin: 0 10px; /* 調整左右邊距 */
+}
+
+.row2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.row2 label {
+    background-color: hwb(0 55% 7%);
+    width:21%;
+    text-align: center;
+}
+
+.row3 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom:10px;
+}
+
+.row3 label {
+   text-align: center;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.row label {
+    flex: 1;
+    text-align: center;
+}
+
+.row input {
+    margin: 0 5px;
+}
+
+
+/* Adjust the button styles */
+.row .submit input,
+.row .cancel input{
+    width: 100px; /* 設定寬度，可以根據需要調整 */
+    height: 40px; /* 設定高度，可以根據需要調整 */
+    margin: 30px auto;
+    padding: 5px;
+    cursor: pointer;
+    border: none;
+    background-color: #D15353;
+    margin-right: 30px;
+    /*outline: 2px solid #C54444;*/
+}
+
+
+/* Adjust input widths for even-numbered items */
+
+#breakfast1_quantity,
+#lunch1_quantity,
+#dinner1_quantity,
+#other1_quantity,
+#breakfast2_quantity,
+#lunch2_quantity,
+#dinner2_quantity,
+#other2_quantity,
+#breakfast3_quantity,
+#lunch3_quantity,
+#dinner3_quantity,
+#other3_quantity,
+#breakfast4_quantity,
+#lunch4_quantity,
+#dinner4_quantity,
+#other4_quantity,
+#breakfast5_quantity,
+#lunch5_quantity,
+#dinner5_quantity,
+#other5_quantity {
+    width: 4%; /* 螢幕寬度的 4% */
+}
+
+#b_q,
+#l_q,
+#d_q,
+#o_q{
+    width: 6%; /* 螢幕寬度的 4% */
+}
+
+#b_i,
+#l_i,
+#d_i,
+#o_i{
+    width: 15%; /* 螢幕寬度的 4% */
+}
+
+#breakfast1,
+#lunch1,
+#dinner1,
+#other1,
+#breakfast2,
+#lunch2,
+#dinner2,
+#other2,
+#breakfast3,
+#lunch3,
+#dinner3,
+#other3,
+#breakfast4,
+#lunch4,
+#dinner4,
+#other4,
+#breakfast5,
+#lunch5,
+#dinner5,
+#other5 {
+    width: 15%; /* 螢幕寬度的 15% */
+}

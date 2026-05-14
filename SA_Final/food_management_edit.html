@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>飲食規劃系統</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+    <link rel="stylesheet" href="statics/css/food_management_edit.css">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+
+    <script src="statics/js/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+	<div class="bgimg">
+		<img class="bg" src="statics/img/bgimg.png">
+		
+		<div id="header">
+			<div class="title-bar">
+				<p>管理員</p>
+			</div>
+			<ul>
+				<li><a href="food_management.html" class="this-page">食品管理</a></li>
+				<li><a href="member_management.html">會員管理</a></li>
+			</ul>
+		</div>
+        <div id="content">
+            <div class="form-container">
+				<form id="form" accept-charset="utf-8">
+					<div>
+						<label for="food_name" class="label-title"><b>食品名字</b></label>
+						<input name="foodInput" maxlength="30" type="text" id="food_name" required="required">
+					</div>
+                    <div>
+						<label for="calories" class="label-title"><b>熱量(cal)</b></label>
+						<input name="caloriesInput" type="number" step="0.1" min="0" id="calories" min="0" required="required">
+					</div>
+					<div>
+						<label for="grains" class="label-title"><b>五穀雜糧類</b></label>
+						<input name="grainsInput" type="number" step="0.1" min="0" id="grains" min="0" required="required">
+					</div>
+					<div>
+						<label for="meats_and_protein" class="label-title"><b>蛋豆魚肉類</b></label>
+						<input name="meatsAndProteinInput" type="number" step="0.1" min="0" id="meats_and_protein" required="required">
+					</div>
+					<div>
+						<label for="vegetables" class="label-title"><b>蔬菜類</b></label>
+						<input name="vegetablesInput" type="number" step="0.1" min="0" id="vegetables" required="required">
+					</div>
+					<div>
+						<label for="fruits" class="label-title"><b>水果類</b></label>
+						<input name="fruitsInput" type="number" step="0.1" min="0" id="fruits" required="required">
+					</div>
+                    <div>
+						<label for="milk_and_products" class="label-title"><b>乳品類</b></label>
+						<input name="milkAndProductsInput" type="number" step="0.1" min="0" id="milk_and_products" required="required">
+					</div>
+                    <div>
+						<label for="fats" class="label-title"><b>油脂類</b></label>
+						<input name="fatsInput" type="number" step="0.1" min="0" id="fats" required="required">
+					</div>
+					<div class="submit"><input type="button" value="更新完成" id="edit_button"></div>
+				</form>
+			</div>
+
+            <script>
+                var url_string = window.location.href;
+				var url = new URL(url_string);
+				var id = url.searchParams.get("food_id");
+				var six_categories_id = url.searchParams.get("six_categories_id");
+				
+				function updateFood(id) {
+					var food_name = $('#food_name').val();
+                    var calories = $('#calories').val();
+					var grains = $('#grains').val();
+					var meats_and_protein = $('#meats_and_protein').val();
+                    var vegetables = $('#vegetables').val();
+                    var fruits = $('#fruits').val();
+                    var milk_and_products = $('#milk_and_products').val();
+                    var fats = $('#fats').val();
+					
+					if(isFormEmpty()==true){
+						alert("不可以為空值！");
+					}
+					else {
+						var data_object = {
+							"food_id": id,
+							"six_categories_id": six_categories_id,
+							"food_name": food_name,
+                            "calories": calories,
+							"grains": grains,
+							"meats_and_protein": meats_and_protein,
+							"vegetables": vegetables,
+							"fruits": fruits,
+							"milk_and_products": milk_and_products,
+                            "fats": fats
+						};
+						
+						var data_string = JSON.stringify(data_object);
+						
+						$.ajax({
+							type: "PUT",
+							url: "api/manage_food.do",
+							data: data_string,
+							crossDomain: true,
+							cache: false,
+							dataType: 'json',
+							timeout: 5000,
+							success: function (response) {
+								if(response.status == 200){
+									alert("更新成功！");
+									redirectToPage();
+								}
+							},
+							error: function () {
+								alert("無法連線到伺服器！");
+							}
+						});
+					}
+				}
+
+				function isFormEmpty() {
+					var foodInput = document.getElementById('food_name').value;
+                    var caloriesInput = document.getElementById('calories').value;
+					var grainsInput = document.getElementById('grains').value;
+					var meatsAndProteinInput = document.getElementById('meats_and_protein').value;
+                    var vegetablesInput = document.getElementById('vegetables').value;
+                    var fruitsInput = document.getElementById('fruits').value;
+                    var milkAndProductsInput = document.getElementById('milk_and_products').value;
+                    var fatsInput = document.getElementById('fats').value;
+					
+					if (foodInput === '' || caloriesInput === '' || grainsInput === '' || meatsAndProteinInput === '' || vegetablesInput === '' || fruitsInput === '' || milkAndProductsInput === '' || fatsInput === '') {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				
+				function redirectToPage() {
+					window.location.href = "food_management.html";
+				}
+				
+				function getFood() {
+					$.ajax({
+						type: "GET",
+
+						url: "api/manage_food.do",
+						crossDomain: true,
+						data: "food_id=" + id,
+						cache: false,
+						dataType: 'json',
+						timeout: 5000,
+						success: function (response) {
+							if(response.status == 200) {
+								document.getElementById('food_name').value = response['response']['data'][0]['food_name'];
+                                document.getElementById('calories').value = response['response']['data'][0]['calories'];
+								document.getElementById('grains').value = response['response']['data'][0]['grains'];
+								document.getElementById('meats_and_protein').value = response['response']['data'][0]['meats_and_protein'];
+                                document.getElementById('vegetables').value = response['response']['data'][0]['vegetables'];
+                                document.getElementById('fruits').value = response['response']['data'][0]['fruits'];
+                                document.getElementById('milk_and_products').value = response['response']['data'][0]['milk_and_products'];
+                                document.getElementById('fats').value = response['response']['data'][0]['fats'];
+							}
+							console.log(response);
+						},
+						error: function () {
+							alert("無法連線到伺服器！");
+						}
+					});
+				}
+				
+				$('#edit_button').click(function() {
+					updateFood(id);
+				});
+				
+				$(document).ready(function() {
+					getFood();
+				});
+            </script>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,89 @@
+<!--登入系統-->
+<!DOCTYPE html>
+<html>
+
+<head>  
+    <meta charset="utf-8">
+    <title>飲食規劃系統</title>
+    <link href="statics/img/index.ico" rel="icon">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+    <link rel="stylesheet" href="statics/css/index.css">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+    <script src="statics/js/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="container">
+        <div class=title-bar>
+            <p>飲食規劃系統</p>
+        </div>
+        
+        <h2>登入系統</h2>
+        <img id="member_icon" src="statics/img/member.png" alt="Member icon">
+
+        <form id="form" accept-charset="utf-8">
+            <div class="input-group">
+                <input name="email" class="input" maxlength="50" type="email" id="member_email" required="required">
+				<label class="label" for="member_email">帳號</label>
+            </div>
+            <div class="input-group">
+                <input name="password" class="input" maxlength="30" type="password" id="member_password" required="required">
+				<label class="label" for="member_password">密碼</label>
+            </div>
+            <div class="button">
+                <button class="submit" id="submit" onclick="login(event)">完成</button>
+                <button class="cancel" id="cancel" onclick="cancel()">取消</button>
+				<a id="unregister" href="register.html">尚未註冊</a>
+            </div>
+
+        </form>
+
+        <script type="text/javascript">
+				async function login(event) {
+					event.preventDefault();
+					var email = $('#member_email').val();
+					var password = $('#member_password').val();
+					
+					if(email === "root@root.com" && password === "Root1234") {
+						window.location.href = 'food_management.html';
+						//alert("登入成功! 歡迎admin!");
+						return;
+					}
+					try {
+						const response = await fetch("api/member.do?email=" + email, {
+							method: "GET",
+							crossDomain: true,
+							cache: "no-cache",
+							headers:{
+								"Content-Type": "application/json",
+							},
+						});
+						if(!response.ok){
+							throw new Error("Network response was not ok");
+						}
+						const responseData = await response.json();
+						
+						if(responseData['response']['data'][0]['password'] === password){
+							alert("登入成功!");
+							const id = responseData['response']['data'][0]['id'];
+							sessionStorage.setItem('memberId',id);
+							window.location.href = 'inbody.html';
+						}
+						else{
+							alert("登入失敗!");
+						}
+					}catch(error) {
+						console.error("Error during login:", error);
+						alert("登入失敗!");
+					}
+				}
+				
+                function cancel(){
+                    $('#form')[0].reset();
+                    console.log("登入取消成功");
+                }
+        </script>
+    </div>
+</body>
+</html>

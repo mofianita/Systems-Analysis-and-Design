@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>飲食規劃系統</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+    <link rel="stylesheet" href="statics/css/chart.css">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+
+    <script src="statics/js/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+	<div class="bgimg">
+		<img class="bg" src="statics/img/bgimg.png">
+		
+		<div id="header">
+			<div class="title-bar">
+				<p>飲食規劃系統</p>
+				<a class="member" href="member.html"><img src="statics/img/member.png" alt="Member website" class="member-img"></a></li>
+			</div>
+			<ul>
+				<li><a href="weight.html">體重</a></li>
+				<li><a href="diet.html">飲食</a></li>
+				<li><a href="menu.html">菜單</a></li>
+				<li><a href="chart.html" class="this-page">圖表</a></li>
+				<li><a href="inbody.html">身體數據</a></li>
+			</ul>
+		</div>
+		<div id="content">
+			<div class="table-container">
+				<table id="table_weight_chart">
+					<tr>
+						<th class="weight-chart-title">體重圖表</th>
+					</tr>
+					<tr>
+						<td id="weight_chart"><img src="statics/img/chart/weight_20231229150241.png" class="chart-img"></td>
+					</tr>
+				</table>
+			</div>
+			<div class="table-container">	
+				<table id="table_heat_chart">
+					<tr>
+						<th class="heat-chart-title">熱量圖表</th>
+					</tr>
+					<tr>
+						<td id="heat_chart"><img src="statics/img/chart/calorie_20231229150242.png" class="chart-img"></td>
+					</tr>
+				</table>
+			</div>
+
+			<script>
+				var id = sessionStorage.getItem('memberId');
+
+				function getChart() {
+					$.ajax({
+						type: "GET",
+						url: "api/data_analysis.do",
+						crossDomain: true,
+						data: "id=" + id,
+						cache: false,
+						dataType: 'json',
+						timeout: 5000,
+						success: function (response) {
+							if(response.status == 200){
+								updateTable(response.response.data);
+							}
+							console.log(response);
+						},
+						error: function () {
+							//alert("無法連線到伺服器！");
+						}
+					});
+				}
+
+				function updateTable(data) {
+					$("#weight_chart").empty();
+					$("#heat_chart").empty();
+					var weight_chart_html = '';
+					var heat_chart_html = '';
+					$.each(data, function(index, value) {
+						weight_chart_html += '<img src="statics/img/chart/' + "weight_20231229150241.png" + '" class="chart-img">';
+						heat_chart_html += '<img src="statics/img/chart/' + "calorie_20231229150242.png" + '" class="chart-img">';
+					})
+
+					$("#weight_chart").append(weight_chart_html);
+					$("#heat_chart").append(heat_chart_html);
+				}
+
+				$(document).ready(function() {
+					getChart();
+				});
+			</script>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>飲食規劃系統</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+    <link rel="stylesheet" href="statics/css/member_management.css">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+
+    <script src="statics/js/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+	<div class="bgimg">
+		<img class="bg" src="statics/img/bgimg.png">
+		
+		<div id="header">
+			<div class="title-bar">
+				<p>管理員</p>
+			</div>
+			<ul>
+				<li><a href="food_management.html">食品管理</a></li>
+				<li><a href="member_management.html" class="this-page">會員管理</a></li>
+			</ul>
+		</div>
+		<div id="content">
+            <div class="table-container">
+				<table id="view_members">
+                    <thead>
+                        <tr>
+                            <caption class="view-members-title"><b>檢視會員名單</b></caption>
+                        </tr>
+                        <tr>
+                            <th>編號</th>
+                            <th>稱謂</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+					<tbody id="tbody">
+                    </tbody>
+				</table>
+			</div>
+            <div class="form-container">
+				<form id="form" accept-charset="utf-8">
+                    <div>
+                        <label for="delete-member" class="label-title">刪 除 會 員</label>
+						<div id="delete-member">
+                            <div>
+                                <label for="member_id" class="label-content">會員編號</label>
+							    <input name="id" type="number" id="member_id" min="1" required="required">
+                            </div>
+                            <div>
+                                <label for="member_name" class="label-content">會員稱謂</label>
+							    <input name="name" maxlength="30" type="text" id="member_name" required="required">
+                            </div>
+                            <div>
+                                <label for="member_email" class="label-content">會員帳號</label>
+                                <input name="email" maxlength="50" type="email"id="member_email" required="required">
+                            </div>
+						</div>
+                    </div>
+                    <div class="submit">
+                        <input type="button" value="取消" id="cancel_button">
+                        <input type="button" value="刪除" id="delete_button">
+                    </div>
+                </form>
+            </div>
+
+            <script>
+                function getAllMember() {
+					$.ajax({
+						type: "GET",
+						url: "api/member.do",
+						crossDomain: true,
+						cache: false,
+						dataType: 'json',
+						timeout: 5000,
+						success: function (response) {
+							if(response.status == 200){
+								updateTable(response.response.data);
+							}
+							console.log(response);
+						},
+						error: function () {
+							alert("無法連線到伺服器！");
+						}
+					});
+				}
+
+                function updateTable(data) {
+					$("#tbody").empty();
+					var table_html = '';
+					$.each(data, function(index, value) {
+                        table_html += '<tr class="this-row"><td>' + value['id'] + '</td>';
+                        table_html += '<td>' + value['name'] + '</td>';
+                        table_html += '<td>' + value['email'] + '</td></tr>';
+					})
+
+					$("#tbody").append(table_html);
+				}
+
+                function deleteMember() {
+                    var check = window.confirm("確認刪除會員？");
+                    var id = document.getElementById('member_id').value;
+                    if (check == true) {
+                        console.log("You pressed OK!");
+                        var data_object = {"id": id};
+                        var data_string = JSON.stringify(data_object);
+                        $.ajax({
+                            type: "DELETE",
+                            url: "api/member.do",
+                            crossDomain: true,
+                            data: data_string,
+                            cache: false,
+                            dataType: 'json',
+                            timeout: 5000,
+                            success: function (response) {
+                                if(response.status == 200){
+                                    getAllMember();
+                                }
+                                console.log(response);
+                            },
+                            error: function () {
+                                alert("無法連線到伺服器！");
+                            }
+                        });
+                    }
+                    else {
+                        console.log("You pressed Cancel!");
+                    }
+                }
+
+                function isFormEmpty() {
+                    var idInput = $('#member_id').val();
+                    var nameInput = $('#member_name').val();
+                    var emailInput = $('#member_email').val();
+					
+					if (idInput === '' || nameInput === '' || emailInput === '') {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+
+                $('#cancel_button').click(function() {
+                    document.getElementById('member_id').value = "";
+					document.getElementById('member_name').value = "";
+                    document.getElementById('member_email').value = "";
+				});
+
+                $('#delete_button').click(function() {
+                    if(isFormEmpty()==true){
+						alert("不可以為空值！");
+					}
+                    else {
+                        deleteMember();
+                    }
+				});
+
+                $(document).ready(function() {
+					getAllMember();
+					
+					$("#tbody").on('click', '.this-row', function() {
+			        var cells = $(this).find('td');
+			        var id = cells.eq(0).text();
+			        var name = cells.eq(1).text();
+			        var email = cells.eq(2).text();
+			
+			        document.getElementById('member_id').value = id;
+			        document.getElementById('member_name').value = name;
+			        document.getElementById('member_email').value = email;
+    				});
+				});
+            </script>
+		</div>
+	</div>
+</body>
+
+</html>

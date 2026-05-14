@@ -1,0 +1,153 @@
+<!--每日飲食的檢視介面-->
+<!DOCTYPE html>
+<html>
+
+<head>  
+    <meta charset="utf-8">
+    <title>飲食規劃系統</title>
+    <link href="statics/img/index.ico" rel="icon">
+	  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	  <meta name="description" content="">
+    <link rel="stylesheet" href="statics/css/viewDiet.css">
+	  <link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+	  <link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+    <script src="statics/js/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+  <div class="bgimg">
+		<img class="bg" src="statics/img/bgimg.png">
+    <div id="container">
+      <div id="header">
+        <div class="title-bar">
+          <p>飲食規劃系統</p>
+          <a class="member" href="member.html"><img src="statics/img/member.png" alt="Member website" class="member-img"></a></li>
+        </div>
+          <ul>
+          <li><a href="diet.html" class="this-page">飲食</a></li>
+          <li><a href="menu.html">菜單</a></li>
+          <li><a href="chart.html">圖表</a></li>
+          <li><a href="inbody.html">身體數據</a></li>
+        </ul>
+      </div>
+
+      <div class="form-container">
+        <form class="food-form">
+      
+          <!-- Row 2: 餐次 -->
+          <div class="row2">
+              <label><b>早餐</b></label>
+              <label><b>午餐</b></label>
+              <label><b>晚餐</b></label>
+          </div>
+      
+          <!-- Row 3: 品項、份量 -->
+          <div class="row3">
+              <label for="breakfast_item" id="b_i">品項</label>
+      
+              <label for="lunch_item" id="l_i">品項</label>
+      
+              <label for="dinner_item" id="d_i">品項</label>
+          </div>
+      
+          <!-- Row 4-8: 使用者輸入的空格 -->
+          <div class="row"> <!--我們在DEMO時 先輸入名字會一樣的品項-->
+              <input type="text" id="breakfast1" name="breakfast" disabled>
+              <input type="text" id="lunch1" name="lunch" disabled>
+              <input type="text" id="dinner1" name="dinner" disabled>
+          </div>
+      
+          <div class="row"><!--5-->
+            <input type="text" id="breakfast2" name="breakfast" disabled>
+            <input type="text" id="lunch2" name="lunch" disabled>
+            <input type="text" id="dinner2" name="dinner" disabled>
+          </div>
+      
+          <div class="row"><!--6-->
+            <input type="text" id="breakfast3" name="breakfast" disabled>
+            <input type="text" id="lunch3" name="lunch" disabled>
+            <input type="text" id="dinner3" name="dinner" disabled>
+          </div>
+      
+          <div class="row"><!--7-->
+            <input type="text" id="breakfast4" name="breakfast" disabled>
+            <input type="text" id="lunch4" name="lunch" disabled>
+            <input type="text" id="dinner4" name="dinner" disabled>
+          </div>
+      
+          <div class="row"><!--8-->
+            <input type="text" id="breakfast5" name="breakfast" disabled>
+            <input type="text" id="lunch5" name="lunch" disabled>
+            <input type="text" id="dinner5" name="dinner" disabled>
+          </div>
+      
+          <!-- Row 9: 提交按鈕 -->
+          <div class="row">
+            <button class="submit" onclick="viewDiet_ok()">完成</button>
+          </div>
+      </form>
+    </div>
+
+      <script>
+        var storedMemberId = sessionStorage.getItem('memberId');
+
+        var url_string = window.location.href;
+        var url = new URL(url_string);
+        var date = url.searchParams.get("date");
+
+
+        function viewDiet_ok(){
+          alert("今日飲食檢視完畢!");
+        }
+
+        function getDietRecord() {
+            $.ajax({
+                type: "GET",
+                url: "api/daily_diet.do",
+                crossDomain: true,
+                data: "id=" + storedMemberId + "&date=" + date,
+                cache: false,
+                dataType: 'json',
+                timeout: 5000,
+                success: function (response) {
+                    if(response.status == 200){
+                      viewdietdetail(response.response.data);
+                    }
+                    console.log(response);
+                },
+                error: function () {
+                    alert("會員每日飲食匯入失敗！");
+                }
+            });
+        }
+            
+          function viewdietdetail(data){
+            $.each(data, function(index, value){
+              document.getElementById('breakfast1').value = value['breakfast1'];
+              document.getElementById('lunch1').value = value['lunch1'];
+              document.getElementById('dinner1').value = value['dinner1'];
+              document.getElementById('breakfast2').value = value['breakfast2'];
+              document.getElementById('lunch2').value = value['lunch2'];
+              document.getElementById('dinner2').value = value['dinner2'];
+              document.getElementById('breakfast3').value = value['breakfast3'];
+              document.getElementById('lunch3').value = value['lunch3'];
+              document.getElementById('dinner3').value = value['dinner3'];
+              document.getElementById('breakfast4').value = value['breakfast4'];
+              document.getElementById('lunch4').value = value['lunch4'];
+              document.getElementById('dinner4').value = value['dinner4'];
+              document.getElementById('breakfast5').value = value['breakfast5'];
+              document.getElementById('lunch5').value = value['lunch5'];
+              document.getElementById('dinner5').value = value['dinner5'];
+          })
+        }
+        
+        $(document).ready(function() {
+          getDietRecord();
+        });
+
+      </script>
+  
+    </div>
+  </div>
+</body>
+</html>

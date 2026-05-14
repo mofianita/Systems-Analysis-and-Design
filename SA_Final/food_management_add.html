@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>飲食規劃系統</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+    <link rel="stylesheet" href="statics/css/food_management_add.css">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+
+    <script src="statics/js/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+	<div class="bgimg">
+		<img class="bg" src="statics/img/bgimg.png">
+		
+		<div id="header">
+			<div class="title-bar">
+				<p>管理員</p>
+			</div>
+			<ul>
+				<li><a href="food_management.html" class="this-page">食品管理</a></li>
+				<li><a href="member_management.html">會員管理</a></li>
+			</ul>
+		</div>
+        <div id="content">
+            <div class="form-container">
+				<form id="form" accept-charset="utf-8">
+					<div>
+						<label for="food_name" class="label-title"><b>食品名字</b></label>
+						<input name="foodInput" maxlength="30" type="text" id="food_name" required="required">
+					</div>
+                    <div>
+						<label for="calories" class="label-title"><b>熱量(cal)</b></label>
+						<input name="caloriesInput" type="number" step="0.1" min="0" id="calories" min="0" required="required">
+					</div>
+					<div>
+						<label for="grains" class="label-title"><b>五穀雜糧類</b></label>
+						<input name="grainsInput" type="number" step="0.1" min="0" id="grains" min="0" required="required">
+					</div>
+					<div>
+						<label for="meats_and_protein" class="label-title"><b>蛋豆魚肉類</b></label>
+						<input name="meatsAndProteinInput" type="number" step="0.1" min="0" id="meats_and_protein" required="required">
+					</div>
+					<div>
+						<label for="vegetables" class="label-title"><b>蔬菜類</b></label>
+						<input name="vegetablesInput" type="number" step="0.1" min="0" id="vegetables" required="required">
+					</div>
+					<div>
+						<label for="fruits" class="label-title"><b>水果類</b></label>
+						<input name="fruitsInput" type="number" step="0.1" min="0" id="fruits" required="required">
+					</div>
+                    <div>
+						<label for="milk_and_products" class="label-title"><b>乳品類</b></label>
+						<input name="milkAndProductsInput" type="number" step="0.1" min="0" id="milk_and_products" required="required">
+					</div>
+                    <div>
+						<label for="fats" class="label-title"><b>油脂類</b></label>
+						<input name="fatsInput" type="number" step="0.1" min="0" id="fats" required="required">
+					</div>
+					<div class="submit"><input type="button" value="新增完成" id="add_button"></div>
+				</form>
+			</div>
+
+            <script>
+                function addFood() {
+                    var food_name = $('#food_name').val();
+                    var calories = $('#calories').val();
+					var grains = $('#grains').val();
+					var meats_and_protein = $('#meats_and_protein').val();
+                    var vegetables = $('#vegetables').val();
+                    var fruits = $('#fruits').val();
+                    var milk_and_products = $('#milk_and_products').val();
+                    var fats = $('#fats').val();
+
+                    if(isFormEmpty()==true){
+						alert("不可以為空值！");
+					}
+					else {
+						var data_object = {
+							"food_name": food_name,
+                            "calories": calories,
+							"grains": grains,
+							"meats_and_protein": meats_and_protein,
+							"vegetables": vegetables,
+							"fruits": fruits,
+							"milk_and_products": milk_and_products,
+                            "fats": fats
+						};
+						
+						var data_string = JSON.stringify(data_object);
+						
+						$.ajax({
+							type: "POST",
+							url: "api/manage_food.do",
+							data: data_string,
+							crossDomain: true,
+							cache: false,
+							dataType: 'json',
+							timeout: 5000,
+							success: function (response) {
+								if(response.status == 200){
+									alert("新增成功！");
+									redirectToPage();
+                                    document.getElementById('food_name').value = "";
+                                    document.getElementById('calories').value = "";
+                                    document.getElementById('grains').value = "";
+                                    document.getElementById('meats_and_protein').value = "";
+                                    document.getElementById('vegetables').value = "";
+                                    document.getElementById('fruits').value = "";
+                                    document.getElementById('milk_and_products').value = "";
+                                    document.getElementById('fats').value = "";
+								}
+							},
+							error: function () {
+								alert("無法連線到伺服器！");
+                                document.getElementById('food_name').value = "";
+                                document.getElementById('calories').value = "";
+                                document.getElementById('grains').value = "";
+                                document.getElementById('meats_and_protein').value = "";
+                                document.getElementById('vegetables').value = "";
+                                document.getElementById('fruits').value = "";
+                                document.getElementById('milk_and_products').value = "";
+                                document.getElementById('fats').value = "";
+							}
+						});
+					}
+                }
+
+                function isFormEmpty() {
+					var foodInput = document.getElementById('food_name').value;
+                    var grainsInput = document.getElementById('calories').value;
+					var grainsInput = document.getElementById('grains').value;
+					var meatsAndProteinInput = document.getElementById('meats_and_protein').value;
+                    var vegetablesInput = document.getElementById('vegetables').value;
+                    var fruitsInput = document.getElementById('fruits').value;
+                    var milkAndProductsInput = document.getElementById('milk_and_products').value;
+                    var fatsInput = document.getElementById('fats').value;
+					
+					if (foodInput === '' || grainsInput === '' || meatsAndProteinInput === '' || vegetablesInput === '' || fruitsInput === '' || milkAndProductsInput === '' || fatsInput === '') {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+
+                function redirectToPage() {
+					window.location.href = "food_management_add.html";
+				}
+
+                $('#add_button').click(function() {
+					addFood();
+				});
+            </script>
+        </div>
+    </div>
+</body>
+
+</html>

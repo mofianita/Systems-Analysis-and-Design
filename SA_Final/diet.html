@@ -1,0 +1,135 @@
+<!--每日飲食介面-->
+<!DOCTYPE html>
+<html>
+
+<head>  
+    <meta charset="utf-8">
+    <title>飲食規劃系統</title>
+    <link href="statics/img/index.ico" rel="icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="statics/css/diet.css">
+    <link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+    <link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+    <script src="statics/js/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+    <div class="bgimg">
+		<img class="bg" src="statics/img/bgimg.png">
+
+        <div id="container">
+        <div id="header">
+            <div class="title-bar">
+                <p>飲食規劃系統</p>
+                <a class="member" href="member.html"><img src="statics/img/member.png" alt="Member website" class="member-img"></a></li>
+            </div>
+                <ul>
+                <li><a href="diet.html" class="this-page">飲食</a></li>
+                <li><a href="menu.html">菜單</a></li>
+                <li><a href="chart.html">圖表</a></li>
+                <li><a href="inbody.html">身體數據</a></li>
+                </ul>
+        </div>
+        <div class="table-container">
+            <table id="table">
+                <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th>總熱量</th>
+                    </tr>
+                </thead>
+                    <tbody id="tbody">
+                        
+                    </tbody>
+            </table>
+            <a class="plus_diet" href="addDiet.html"><img class="plus" src="statics/img/plus.png" alt="新增飲食"></a>
+        </div>    
+            <script type="text/javascript">
+                var storedMemberId = sessionStorage.getItem('memberId');
+                var date="";
+
+                function deleteMenu() {	//刪除飲食紀錄
+                    var check = window.confirm("確定刪除？");
+                    if (check == true) {
+                        console.log("You pressed OK!")
+
+                        var data_object = {
+                            "id": storedMemberId,
+                            "date": date
+                        };
+                        var data_string = JSON.stringify(data_object);
+                        
+                        $.ajax({
+                            type: "DELETE",
+                            url: "api/daily_diet.do",
+                            crossDomain: true,
+                            data: data_string,
+                            cache: false,
+                            dataType: 'json',
+                            timeout: 5000,
+                            success: function (response) {
+                                if(response.status == 200){
+                                    alert("成功刪除飲食紀錄");
+                                    getAllRecord();
+                                }
+                                console.log(response);
+                            },
+                            error: function () {
+                                alert("刪除飲食紀錄失敗！");
+                            }
+                        });
+                    }
+                    else {
+                        console.log("You pressed Cancel!");
+                    }
+                }
+
+                    function getAllRecord() { //顯示全部的飲食紀錄
+                        $.ajax({
+                                type: "GET",
+                                url: "api/daily_diet.do", //連線到controller
+                                data: "id=" + storedMemberId,
+                                crossDomain: true,
+                                cache: false,
+                                dataType: 'json',
+                                timeout: 5000,
+                                success: function (response) {
+                                    if(response.status == 200){
+                                        updateTable(response.response.data);
+                                    }
+                                    
+                                    console.log(response);
+                                },
+                                error: function () {
+                                    alert("顯示全部的飲食紀錄失敗！");
+                                }
+                        });
+                    }
+                    
+                    // 更新會員列表表格
+                    function updateTable(data) {
+                        $("#tbody").empty();
+                        var table_html = '';
+                        $.each(data, function(index, value) {
+                            table_html += '<tr><td scope="row">' + value['date'] +  '</td>';
+                            table_html += '<td>' + value['calories'] + '</td>';
+                            table_html += '<td>' + '<a href="viewDiet.html?date=' + value['date'] + '"><img class="img_size" src="statics/img/view.png" alt="檢視"></a> | ';
+                            table_html += '<a href="editDiet.html?date=' + value['date'] + '"><img class="img_size" src="statics/img/edit.png" alt="編輯"></a> | ';
+                            table_html += '<img class="img_size" src="statics/img/delete.png" alt="刪除" onclick="deleteMenu()"></td></tr>';
+                            date = value['date'];
+                        });
+
+                        $("#tbody").append(table_html);
+                    }
+                    
+                    $(document).ready(function() {
+                    getAllRecord();
+                    });
+
+            </script>       
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!--六大類-->
+<!DOCTYPE html>
+<html>
+
+<head>  
+    <meta charset="utf-8">
+    <title>飲食規劃系統</title>
+    <link href="statics/img/index.ico" rel="icon">
+	  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	  <meta name="description" content="">
+      <link rel="stylesheet" href="statics/css/showSixCategories.css"><!--要放.css-->
+	  <link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+	  <link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+      <script src="statics/js/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+  <div class="bgimg">
+		<img class="bg" src="statics/img/bgimg.png">
+    <div id="container">
+      <div id="header">
+        <div class="title-bar">
+          <p>飲食規劃系統</p>
+          <a class="member" href="member.html"><img src="statics/img/member.png" alt="Member website" class="member-img"></a></li>
+        </div>
+        <ul>
+          <li><a href="diet.html">飲食</a></li>
+          <li><a href="menu.html" class="this-page">菜單</a></li>
+          <li><a href="chart.html">圖表</a></li>
+          <li><a href="inbody.html">身體數據</a></li>
+        </ul>
+      </div>
+
+        <div class="six_categories_1">
+            <label><b>五穀雜糧類</b></label>
+            <div class="show" id="grains"></div>
+            <label><b>蛋豆魚肉類</b></label>
+            <div class="show" id="meats_and_protein"></div>
+            <label><b>蔬菜類</b></label>
+            <div class="show" id="vegetables"></div>
+        </div>
+
+        <div class="six_categories_2">
+            <label><b>水果類</b></label>
+            <div class="show" id="fruits"></div>
+            <label><b>乳品類</b></label>
+            <div class="show" id="milk_and_products"></div>
+            <label><b>油脂類</b></label>
+            <div class="show" id="fats"></div>
+        </div>
+
+        <button onclick="ok()">完成</button>
+
+    </div>
+
+    <script>
+        var storedMemberId = sessionStorage.getItem('memberId');
+
+        function getSixCategories() { //顯示全部的飲食紀錄
+          $.ajax({
+              type: "GET",
+              url: "api/TDEE.do", /*是連線到MemberController的doGet
+                            				(從WEB-INF/lib/web.xml可以知道url是api/member.do
+                            			  會到MemberController去找對應的type)*/
+              data: "id=" + storedMemberId,
+              crossDomain: true,
+              cache: false,
+              dataType: 'json',
+              timeout: 5000,
+              success: function (response) {
+                if(response.status == 200){
+                    displaySixCategories(response.response.data);
+                }                
+                console.log(response);
+              },
+              error: function () {
+                alert("回傳六大類失敗！");
+              }
+          });
+        }
+
+        //顯示Menu
+        function displaySixCategories(data){
+          $("#grains").text(data[0]['grains']);
+          $("#meats_and_protein").text(data[0]['meat_and_protein']);
+          $("#vegetables").text(data[0]['vegetables']);
+          $("#fruits").text(data[0]['fruits']);
+          $("#milk_and_products").text(data[0]['milk_and_products']);
+          $("#fats").text(data[0]['fats']);
+          
+        }
+        
+        $(document).ready(function() {
+          getSixCategories();
+        });
+
+        function ok(){
+            window.history.back(); //返回上一頁
+        }
+
+    </script>
+  </div>
+</body>
+</html>

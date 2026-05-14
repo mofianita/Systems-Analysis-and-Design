@@ -1,0 +1,114 @@
+<!--註冊系統-->
+<!DOCTYPE html>
+<html>
+
+<head>  
+    <meta charset="utf-8">
+    <title>飲食規劃系統</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+    <link rel="stylesheet" href="statics/css/register.css">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+    <script src="statics/js/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="container">
+        <div class=title-bar>
+            <p>飲食規劃系統</p>
+        </div>
+        
+        <h2>註冊系統</h2>
+        <img  id="member_icon" src="statics/img/member.png" alt="Member icon">
+
+        <form id="form" accept-charset="utf-8">
+            <div class="input-group">
+                <input name="name" class="input" maxlength="30" type="text" id="member_name" required="required">
+                <label class="label" for="member_name">稱謂</label>
+            </div>
+            <div class="input-group">
+                <input name="email" class="input" maxlength="50" type="email" id="member_email" required="required">
+                <label class="label" for="member_email">帳號</label>
+            </div>
+            <div class="input-group">
+                <input name="password" class="input" maxlength="30" type="password" id="member_password" required="required">
+                <label class="label" for="member_password">密碼</label>
+            </div>
+            <div class="button">
+                <div class="submit"><input type="button" value="註冊" id="submit"></div>
+                <div class="cancel"><input type="button" value="取消" id="cancel"></div>
+            </div>
+        </form>
+
+        <script type="text/javascript">
+                // 處理表單點擊事件
+                var id = "";
+
+                var $form_submit = $('#submit');
+                $form_submit.click(function() {
+                    register_member();
+                });
+
+                function register_member() {
+                    var name = $('#member_name').val();
+                    var email = $('#member_email').val();
+                    var password = $('#member_password').val();
+
+                    var email_rule = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+                    var password_rule = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+                    if (!email_rule.test(email)) {
+                        alert("Email格式不符！");
+                    }
+                    else if(!password_rule.test(password)) {
+                        alert("密碼格式不符，長度至少8，且至少包含一個數字和英文字母！");
+                    }
+                    else {
+                        // 將資料組成JSON格式
+                    var data_object = {
+                            "name": name,
+                            "email": email,
+                            "password": password
+                        };
+
+                            // 將JSON格式轉換成字串
+                        var data_string = JSON.stringify(data_object);
+
+                        // 發出POST的AJAX請求
+                        $.ajax({
+                            type: "POST",
+                            url: "api/member.do",
+                            data: data_string,
+                            crossDomain: true,
+                            cache: false,
+                            dataType: 'json',
+                            timeout: 5000,
+                            success: function (response) {
+                                alert("註冊成功!");
+                                redirect();
+                            },
+                            error: function () {
+                                alert("註冊失敗！");
+                            }
+                        });
+                    }
+                }
+
+                function redirect() {
+                    window.location.href = 'index.html';
+                }
+
+                var $form_cancel = $('#cancel');
+                $form_cancel.click(function() {
+                    cancel();
+                });
+
+                function cancel(){
+                    $('#form')[0].reset();
+                    window.history.back();
+                }
+
+        </script>
+    </div>
+</body>
+</html>

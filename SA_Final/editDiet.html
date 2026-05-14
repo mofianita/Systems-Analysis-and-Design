@@ -1,0 +1,220 @@
+<!--每日飲食的修改介面-->
+<!DOCTYPE html>
+<html>
+
+<head>  
+    <meta charset="utf-8">
+    <title>飲食規劃系統</title>
+    <link href="statics/img/index.ico" rel="icon">
+	  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	  <meta name="description" content="">
+    <link rel="stylesheet" href="statics/css/editDiet.css">
+	  <link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+	  <link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+    <script src="statics/js/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+  <div class="bgimg">
+		<img class="bg" src="statics/img/bgimg.png">
+    <div id="container">
+      <div id="header">
+        <div class="title-bar">
+          <p>飲食規劃系統</p>
+          <a class="member" href="member.html"><img src="statics/img/member.png" alt="Member website" class="member-img"></a></li>
+        </div>
+          <ul>
+          <li><a href="diet.html" class="this-page">飲食</a></li>
+          <li><a href="menu.html">菜單</a></li>
+          <li><a href="chart.html">圖表</a></li>
+          <li><a href="inbody.html">身體數據</a></li>
+        </ul>
+      </div>
+
+      <div class="form-container">
+        <form class="food-form">
+          <!-- Row 2: 餐次 -->
+          <div class="row2">
+              <label><b>早餐</b></label>
+              <label><b>午餐</b></label>
+              <label><b>晚餐</b></label>
+          </div>
+      
+          <!-- Row 3: 品項、份量 -->
+          <div class="row3">
+              <label for="breakfast_item" id="b_i">品項</label>
+      
+              <label for="lunch_item" id="l_i">品項</label>
+      
+              <label for="dinner_item" id="d_i">品項</label>
+          </div>
+      
+          <!-- Row 4-8: 使用者輸入的空格 -->
+          <div class="row"> <!--我們在DEMO時 先輸入名字會一樣的品項-->
+              <input type="text" id="breakfast1" name="breakfast">
+              <input type="text" id="lunch1" name="lunch">
+              <input type="text" id="dinner1" name="dinner">
+          </div>
+      
+          <div class="row"><!--5-->
+            <input type="text" id="breakfast2" name="breakfast">
+            <input type="text" id="lunch2" name="lunch">
+            <input type="text" id="dinner2" name="dinner">
+          </div>
+      
+          <div class="row"><!--6-->
+            <input type="text" id="breakfast3" name="breakfast">
+            <input type="text" id="lunch3" name="lunch">
+            <input type="text" id="dinner3" name="dinner">
+          </div>
+      
+          <div class="row"><!--7-->
+            <input type="text" id="breakfast4" name="breakfast">
+            <input type="text" id="lunch4" name="lunch">
+            <input type="text" id="dinner4" name="dinner">
+          </div>
+      
+          <div class="row"><!--8-->
+            <input type="text" id="breakfast5" name="breakfast">
+            <input type="text" id="lunch5" name="lunch">
+            <input type="text" id="dinner5" name="dinner">
+          </div>
+      
+          <!-- Row 9: 提交按鈕 -->
+          <div class="button">
+            <button class="submit" id="submit" onclick="modify_diet()">完成</button>
+            <button class="cancel" id="cancel"onclick="edit_date_cancel()">取消</button> 
+          </div>
+      </form>
+    </div>
+
+      <script>
+        var storedMemberId = sessionStorage.getItem('memberId');
+
+        var url_string = window.location.href;
+        var url = new URL(url_string);
+        var date = url.searchParams.get("date");
+
+        function modify_diet() {
+
+            var breakfast1 = $('#breakfast1').val();
+            var lunch1 = $('#lunch1').val();
+            var dinner1 = $('#dinner1').val();
+
+            var breakfast2 = $('#breakfast2').val();
+            var lunch2 = $('#lunch2').val();
+            var dinner2 = $('#dinner2').val();
+
+            var breakfast3 = $('#breakfast3').val();
+            var lunch3 = $('#lunch3').val();
+            var dinner3 = $('#dinner3').val();
+
+            var breakfast4 = $('#breakfast4').val();
+            var lunch4 = $('#lunch4').val();
+            var dinner4 = $('#dinner4').val();
+
+            var breakfast5 = $('#breakfast5').val();
+            var lunch5 = $('#lunch5').val();
+            var dinner5 = $('#dinner5').val();
+
+
+            // 將資料組成JSON格式
+            var form_data = {
+              "id": storedMemberId,
+              "date": date,
+              "breakfast1": breakfast1,
+              "breakfast2": breakfast2,
+              "breakfast3": breakfast3,
+              "breakfast4": breakfast4,
+              "breakfast5": breakfast5,
+              "lunch1": lunch1,
+              "lunch2": lunch2,
+              "lunch3": lunch3,
+              "lunch4": lunch4,
+              "lunch5": lunch5,
+              "dinner1": dinner1,
+              "dinner2": dinner2,
+              "dinner3": dinner3,
+              "dinner4": dinner4,
+              "dinner5": dinner5
+              };
+              // 將JSON格式轉換成字串
+              var data_string = JSON.stringify(form_data);
+
+              // 發出PUT的AJAX請求
+              $.ajax({
+                type: "PUT",
+                url: "api/daily_diet.do",
+                data: data_string,
+                crossDomain: true,
+                cache: false,
+                dataType: 'json',
+                timeout: 5000,
+                success: function (response) {
+                  if(response.status == 200){
+                    alert("今日飲食輸入完成!");
+                  }
+                  getDietRecord();
+                  //window.location.href = "diet.html";
+                },
+                error: function () {
+                  alert("今日飲食輸入失敗！");
+              }
+              });
+        }
+
+            function edit_date_cancel(){
+              $('.food-form')[0].reset();// 清空表單輸入
+            }
+
+            function getDietRecord() {
+                $.ajax({
+                    type: "GET",
+                    url: "api/daily_diet.do",
+                    crossDomain: true,
+                    data: "id=" + storedMemberId + "&date=" + date,
+                    cache: false,
+                    dataType: 'json',
+                    timeout: 5000,
+                    success: function (response) {
+                        if(response.status == 200){
+                          dietdetail(response.response.data);
+                        }
+                        console.log(response);
+                    },
+                    error: function () {
+                        alert("會員每日飲食匯入失敗！");
+                    }
+                });
+            }
+
+            function dietdetail(data){
+              $.each(data, function(index, value){
+                document.getElementById('breakfast1').value = value['breakfast1'];
+                document.getElementById('lunch1').value = value['lunch1'];
+                document.getElementById('dinner1').value = value['dinner1'];
+                document.getElementById('breakfast2').value = value['breakfast2'];
+                document.getElementById('lunch2').value = value['lunch2'];
+                document.getElementById('dinner2').value = value['dinner2'];
+                document.getElementById('breakfast3').value = value['breakfast3'];
+                document.getElementById('lunch3').value = value['lunch3'];
+                document.getElementById('dinner3').value = value['dinner3'];
+                document.getElementById('breakfast4').value = value['breakfast4'];
+                document.getElementById('lunch4').value = value['lunch4'];
+                document.getElementById('dinner4').value = value['dinner4'];
+                document.getElementById('breakfast5').value = value['breakfast5'];
+                document.getElementById('lunch5').value = value['lunch5'];
+                document.getElementById('dinner5').value = value['dinner5'];
+              })
+            }
+           
+           $(document).ready(function() {
+          	getDietRecord();
+        	});
+
+      </script>
+  
+    </div>
+  </div>
+</body>
+</html>

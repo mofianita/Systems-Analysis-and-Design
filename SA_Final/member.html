@@ -1,0 +1,156 @@
+<!--更新member資料-->
+<!DOCTYPE html>
+<html>
+
+<head>  
+    <meta charset="utf-8">
+    <title>飲食規劃系統</title>
+    <link href="statics/img/index.ico" rel="icon">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="statics/css/member.css">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
+    
+    <script src="statics/js/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="header">
+        <div class=title-bar>
+            <p>飲食規劃系統</p>
+            <a class="member" href="member.html"><img src="statics/img/member.png" alt="Member website" class="member-img"></a></li>
+        </div>
+            <ul>
+            <li><a href="weight.html">體重</a></li>
+            <li><a href="diet.html">飲食</a></li>
+            <li><a href="menu.html">菜單</a></li>
+            <li><a href="chart.html">圖表</a></li>
+            <li><a href="inbody.html">身體數據</a></li>
+        </ul>
+    </div>
+    <div id="content">   
+        <h2>修改會員資料</h2>
+        <img id="member_icon" src="statics/img/member.png" alt="Member icon">
+
+        <form id="form" accept-charset="utf-8">
+			<!--<div style="display:none;"><input type="hidden" name="_method" value="POST"></div>-->
+            <div class="input name required">
+                <label class="label" for="member_name">稱謂</label>
+                <input name="name" maxlength="30" type="text" id="member_name" required="required">
+            </div>
+            <div class="input email required">
+                <label class="label" for="member_email">帳號</label>
+                <input name="email" maxlength="50" type="email" id="member_email" required="required" disabled>
+            </div>
+            <div class="input password required">
+                <label class="label" for="member_password">密碼</label>
+                <input name="password" maxlength="30" type="password" id="member_password" required="required">
+            </div>
+            <div class="button">
+                <div class="submit"><input type="button" value="確定" id="submit"></div>
+                <div class="cancel"><input type="button" value="取消" id="cancel"></div>
+            </div>
+        </form>
+
+        <script type="text/javascript">
+
+                // 處理表單點擊事件
+                var $form_submit = $('#submit');
+                $form_submit.click(function() {
+                    modifyMember(storedMemberId);
+                });
+
+                var storedMemberId = sessionStorage.getItem('memberId');
+
+                function modifyMember(storedMemberId) {
+                    var name = $('#member_name').val();
+                    var email = $('#member_email').val();
+                    var password = $('#member_password').val();
+
+                    var password_rule = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+                    if(!password_rule.test(password)) {
+                        alert("密碼格式不符，長度至少8，且至少包含一個數字和英文字母！");
+                    }
+                    else {
+                        // 將資料組成JSON格式
+                    var data_object = {
+                            "id": storedMemberId,
+                            "name": name,
+                            "email": email,
+                            "password": password
+                        };
+
+                        // 將JSON格式轉換成字串
+                        var data_string = JSON.stringify(data_object);
+
+                        // 發出PUT的AJAX請求
+                        $.ajax({
+                            type: "PUT",
+                            url: "api/member.do",
+                            data: data_string,
+                            crossDomain: true,
+                            cache: false,
+                            dataType: 'json',
+                            timeout: 5000,
+                                success: function (response) {
+                                    alert("更新會員資料成功!");
+                                    getMember();
+                                },
+                                error: function () {
+                                    alert("更新會員資料失敗！");
+                                }
+                        });
+                    }
+                }
+
+                function getMember() {
+					
+					
+                    $.ajax({
+                        type: "GET",
+                        url: "api/member.do",
+                        crossDomain: true,
+                        data: "id=" + storedMemberId,
+                        cache: false,
+                        dataType: 'json',
+                        timeout: 5000,
+                        success: function (response) {
+                            if(response.status == 200){
+								memberdetail(response.response.data);
+                            }
+                            console.log(response);
+                        },
+                        error: function () {
+                            alert("會員資料匯入失敗！");
+                        }
+                    });
+                }
+                
+                function memberdetail(data){
+					$.each(data, function(index, value) {
+			            document.getElementById('member_name').value = value['name'];
+	                    document.getElementById('member_email').value = value['email'];
+	                    document.getElementById('member_password').value = value['password'];
+					})
+				}
+
+                var $form_cancel = $('#cancel');
+                $form_cancel.click(function() {
+                    member_cancel();
+                });
+
+                function member_cancel(){
+                    $('#form')[0].reset();
+                    window.history.back();
+                }
+                        
+                $(document).ready(function() {
+                    getMember();
+                });
+
+        </script>
+    </div>
+</body>
+</html>

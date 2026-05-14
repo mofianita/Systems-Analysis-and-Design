@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>飲食規劃系統</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+    <link rel="stylesheet" href="statics/css/food_management.css">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+
+    <script src="statics/js/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+	<div class="bgimg">
+		<img class="bg" src="statics/img/bgimg.png">
+		
+		<div id="header">
+			<div class="title-bar">
+				<p>管理員</p>
+			</div>
+			<ul>
+				<li><a href="food_management.html" class="this-page">食品管理</a></li>
+				<li><a href="member_management.html">會員管理</a></li>
+			</ul>
+		</div>
+        <div id="content">
+            <div class="form-container">
+				<form id="form" accept-charset="utf-8">
+                    <div>
+                        <label for="food" class="label-content">食品名字</label>
+						<input name="food_name" maxlength="30" type="text" id="food" required="required">
+                    </div>
+                    <div class="submit">
+                        <input type="button" value="查詢" id="search_button">
+                        <input type="button" value="新增" id="add_button">
+                    </div>
+                </form>
+            </div>
+            <div class="table-container">
+				<table id="six_categories">
+                    <tr>
+						<th class="six-categories-title">六大類食物營養標示</th>
+					</tr>
+                    <tr>
+                        <th>熱量(cal)</th>
+                        <td id="calories"></td>
+                    </tr>
+                    <tr>
+                        <th>五穀雜糧類</th>
+                        <td id="grains"></td>
+                    </tr>
+                    <tr>
+                        <th>蛋豆魚肉類</th>
+                        <td id="meats_and_protein"></td>
+                    </tr>
+                    <tr>
+                        <th>蔬菜類</th>
+                        <td id="vegetables"></td>
+                    </tr>
+                    <tr>
+                        <th>水果類</th>
+                        <td id="fruits"></td>
+                    </tr>
+                    <tr>
+                        <th>乳品類</th>
+                        <td id="milk_and_products"></td>
+                    </tr>
+                    <tr>
+                        <th>油脂類</th>
+                        <td id="fats"></td>
+                    </tr>
+                    <tr>
+                        <td><button id="edit_button" onclick="redirectToPage()">編輯</button></td>
+                        <td><button id="delete_button" onclick="deleteFood()">刪除</button></td>
+                    </tr>
+				</table>
+			</div>
+
+            <script>
+                var food_id = "";
+                var six_categories_id = "";
+
+                $('#search_button').click(function() {
+                    var food_name = document.getElementById('food').value;
+
+                    $.ajax({
+						type: "GET",
+						url: "api/manage_food.do",
+						crossDomain: true,
+                        data: "food_name=" + food_name,
+						cache: false,
+						dataType: 'json',
+						timeout: 5000,
+						success: function (response) {
+							if(response.status == 200){
+								updateTable(response.response.data);
+							}
+							console.log(response);
+						},
+						error: function () {
+							alert("無法連線到伺服器！");
+						}
+					});
+                });
+
+                function updateTable(data) {
+                    $("#calories").empty();
+					$("#grains").empty();
+                    $("#meats_and_protein").empty();
+                    $("#vegetables").empty();
+                    $("#fruits").empty();
+                    $("#milk_and_products").empty();
+                    $("#fats").empty();
+                    var calories_html = '';
+					var grains_html = '';
+					var meats_and_protein_html = '';
+					var vegetables_html = '';
+					var fruits_html = '';
+					var milk_and_products_html = '';
+					var fats_html = '';
+					$.each(data, function(index, value) {
+                        calories_html += value['calories'] + '<br>';
+						grains_html += value['grains'] + '<br>';
+						meats_and_protein_html += value['meats_and_protein'] + '<br>';
+						vegetables_html += value['vegetables'] + '<br>';
+						fruits_html += value['fruits'] + '<br>';
+						milk_and_products_html += value['milk_and_products'] + '<br>';
+						fats_html += value['fats'] + '<br>';
+                        food_id += value['food_id'];
+                        six_categories_id += value['six_categories_id'];
+					})
+
+                    $("#calories").append(calories_html);
+					$("#grains").append(grains_html);
+					$("#meats_and_protein").append(meats_and_protein_html);
+					$("#vegetables").append(vegetables_html);
+					$("#fruits").append(fruits_html);
+					$("#milk_and_products").append(milk_and_products_html);
+					$("#fats").append(fats_html);
+				}
+
+                $('#add_button').click(function() {
+                    window.location.href = "food_management_add.html";
+                });
+
+                function redirectToPage() {
+                    if(isTableEmpty()==true){
+						alert("請先查詢食品！");
+					}
+                    else {
+					    window.location.href = "food_management_edit.html?food_id=" + food_id + "&six_categories_id=" + six_categories_id;
+                    }
+				}
+
+                function deleteFood() {
+                    if(isTableEmpty()==true){
+						alert("請先查詢食品！");
+					}
+                    else {
+                        var food_name = document.getElementById('food').value;
+                        var check = window.confirm("確認刪除食品？");
+                        if (check == true) {
+                            console.log("You pressed OK!");
+                            var data_object = {'food_name': food_name};
+                            var data_string = JSON.stringify(data_object);
+                            $.ajax({
+                                type: "DELETE",
+                                url: "api/manage_food.do",
+                                crossDomain: true,
+                                data: data_string,
+                                cache: false,
+                                dataType: 'json',
+                                timeout: 5000,
+                                success: function (response) {
+                                    if(response.status == 200){
+                                        document.getElementById('food').value = "";
+                                        $("#calories").empty();
+                                        $("#grains").empty();
+                                        $("#meats_and_protein").empty();
+                                        $("#vegetables").empty();
+                                        $("#fruits").empty();
+                                        $("#milk_and_products").empty();
+                                        $("#fats").empty();
+                                    }
+                                    console.log(response);
+                                },
+                                error: function () {
+                                    alert("無法連線到伺服器！");
+                                }
+                            });
+                        }
+                        else {
+                            console.log("You pressed Cancel!");
+                        }
+                    }
+				}
+
+                function isTableEmpty() {
+                    var table = document.getElementById('six_categories');
+                    var row = 1;
+                    var column = 1;
+                    var cellValue = table.rows[row].cells[column].innerHTML;
+					
+					if (cellValue === '') {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+            </script>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,88 @@
+body {
+	font-family: Poppins, "PingFang TC", "Microsoft JhengHei","Microsoft Yahei", sans-serif !important;
+	background-color: rgba(165, 42, 42, 0.3);
+}
+.bgimg {
+	position: relative;
+}
+.bg {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	object-fit: cover;
+	opacity: 0.5;
+	z-index: -1;
+}
+.title-bar {
+	display: flex;
+	text-align: left;
+	font-size: 32px;
+	overflow: hidden;
+	background-color: #D15353;
+	color: #FFFFFF;
+}
+p {
+    margin-left: 40px;
+}
+.member-img {
+	width: 70%;
+	height: auto;
+}
+.member {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+}
+ul {
+	display: flex;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #E9E9E9;
+}
+li {
+	flex: 1
+}
+li a {
+	display: block;
+	color: #747474;
+	text-align: center;
+	font-size: 24px;
+	padding: 10px;
+	text-decoration: none;
+}
+li a:hover:not(.active) {
+	color: #D15353;
+	background-color: #E3E3E3;
+}
+.this-page {
+	color: #D15353;
+}
+.table-container {
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 20px;
+	margin-left: 200px; /*視實際圖片的大小修改*/
+	margin-right: 200px; /*視實際圖片的大小修改*/
+	padding: 5px 30px;
+	background-color: #F5F5F5;
+	background-size: cover;
+	border-radius: 25px;
+}
+table {
+	text-align: center;
+	font-size: 24px;
+	border-spacing: 20px 35px;
+}
+.weight-chart-title, .heat-chart-title {
+	background-color: #E9E9E9;
+	padding: 10px 48px;
+	border-radius: 25px;
+}
+.chart-img {
+	width: 100%; /*視實際圖片的大小修改*/
+	height: auto;
+}

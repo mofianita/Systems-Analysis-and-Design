@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>飲食規劃系統</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+    <link rel="stylesheet" href="statics/css/inbody.css">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="icon">
+	<link href="statics/icon/favicon.ico" type="image/x-icon" rel="shortcut icon">
+	
+    <script src="statics/js/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+	<div class="bgimg">
+		<img class="bg" src="statics/img/bgimg.png">
+		
+		<div id="header">
+			<div class="title-bar">
+				<p>飲食規劃系統</p>
+				<a class="member" href="member.html" id="memberLink"><img src="statics/img/member.png" alt="Member website" class="member-img"></a></li>
+			</div>
+			<ul>
+				<li><a href="weight.html" id="weightLink">體重</a></li>
+				<li><a href="diet.html" id="dietLink">飲食</a></li>
+				<li><a href="menu.html" id="menuLink">菜單</a></li>
+				<li><a href="chart.html" id="chartLink">圖表</a></li>
+				<li><a href="inbody.html" class="this-page"  id="inbodyLink">身體數據</a></li>
+			</ul>
+		</div>
+		<div id="content">
+			<div class="table-container">
+				<table id="table_inbody">
+					<tr>
+						<th class="inbody">身體數據</th>
+						<th scope="col"><button class="edit" onclick="redirectToPage()">編輯</button></th>
+					</tr>
+					<tr>
+						<th>性別</th>
+						<td id="gender"></td>
+					</tr>
+					<tr>
+						<th>年齡</th>
+						<td id="age"></td>
+					</tr>
+					<tr>
+						<th>身高</th>
+						<td id="height"></td>
+					</tr>
+					<tr>
+						<th>體重</th>
+						<td id="weight"></td>
+					</tr>
+					<tr>
+						<th>自我活動力</th>
+						<td id="self_activity"></td>
+					</tr>
+				</table>
+			</div>
+			<div class="table-container">	
+				<table id="table_result">
+					<tr>
+						<th class="result">分析結果</th>
+					</tr>
+					<tr>
+						<th>基礎代謝率(BMR)</th>
+						<td id="bmr"></td>
+					</tr>
+				</table>
+			</div>
+			
+			<script>
+				var id = sessionStorage.getItem('memberId');
+				
+				function getInbody() {
+					$.ajax({
+						type: "GET",
+						url: "api/personal_inbody.do",
+						crossDomain: true,
+						data: "member_id=" + id,
+						cache: false,
+						dataType: 'json',
+						timeout: 5000,
+						success: function (response) {
+							if(response.status == 200){
+								updateTable(response.response.data);
+							}
+							console.log(response);
+						},
+						error: function () {
+							alert("還沒有建立身體數據或無法連線到伺服器！");
+						}
+					});
+				}
+				
+				function updateTable(data) {
+					$("#gender").empty();
+					$("#age").empty();
+					$("#height").empty();
+					$("#weight").empty();
+					$("#self_activity").empty();
+					$("#bmr").empty();
+					var gender_html = '';
+					var age_html = '';
+					var height_html = '';
+					var weight_html = '';
+					var self_activity_html = '';
+					var bmr_html = '';
+					$.each(data, function(index, value) {
+						gender_html += value['gender'] + '<br>';
+						age_html += value['age'] + '<br>';
+						height_html += value['height'] + '<br>';
+						weight_html += value['weight'] + '<br>';
+						self_activity_html += value['self_activity'] + '<br>';
+						bmr_html += value['bmr'] + '<br>';
+					})
+
+					$("#gender").append(gender_html);
+					$("#age").append(age_html);
+					$("#height").append(height_html);
+					$("#weight").append(weight_html);
+					$("#self_activity").append(self_activity_html);
+					$("#bmr").append(bmr_html);
+				}
+				
+				function redirectToPage() {
+					window.location.href = "inbody_edit.html?id=" + id;
+				}
+				
+				$(document).ready(function() {
+					getInbody();
+				});
+			</script>
+		</div>
+	</div>
+</body>
+
+</html>

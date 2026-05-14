@@ -1,0 +1,89 @@
+body {
+	font-family: Poppins, "PingFang TC", "Microsoft JhengHei","Microsoft Yahei", sans-serif !important;
+}
+.title-bar {
+	display: flex;
+	text-align: left;
+	font-size: 32px;
+	overflow: hidden;
+	background-color: #D15353;
+	color: #FFFFFF;
+    margin-bottom: 30px;
+}
+p {
+    margin-left: 40px;
+}
+
+h2 {
+    font-size: 36px;
+    margin-top: 50px;
+    text-align: center;
+}
+#member_icon {    
+	display: block;
+    margin: 0 auto;
+    width: 5%;
+    height: auto;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 10px;
+}
+.input-group {
+    font-size: 1.25rem;
+    position: relative;
+    --primary: #2196F3;
+}
+.label {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    color: #D4D4D4;
+    pointer-events: none;
+    transition: 150ms ease cubic-bezier(0.4, 0, 0.2, 1);
+}
+.input {
+    all: unset;
+    color: #000000;
+    padding: 1rem;
+    border: 1px solid #9E9E9E;
+    border-radius: 10px;
+    transition: 150ms ease cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 10px;
+    width: 360px;
+}
+.input:focus {
+    border: 1px solid
+        var(--primary);
+}
+.input:is(:focus, :valid) ~ label {
+    transform: translateY(-120%) scale(0.7);
+    background-color: #FFFFFF;
+    padding-inline: 0.3rem;
+    color:var(--primary);
+}
+.button {
+    display: flex;
+    justify-content: space-around; 
+    column-gap: 15px;
+}
+.button input {
+    width: 100px;
+	font-size: 18px;
+	border: none;
+	background-color: #D15353;
+	color: #FFFFFF;
+	padding: 5px 20px;
+	text-align: center;
+	font-size: 20px;
+	margin-top: 10px;
+	cursor: pointer;
+	float: right;
+}
+.button input:hover {
+    background-color: #FF5858;
+}
